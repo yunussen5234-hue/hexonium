@@ -3,268 +3,272 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hexonium • Operasyon Paneli</title>
+  <title>Hexonium • Operasyon Yönetim Sistemi</title>
   <style>
-    :root{
-      --bg:#0b1020;--bg2:#111a33;--card:#ffffff;--line:#e5e7eb;--text:#0f172a;--muted:#64748b;
-      --primary:#2563eb;--ok:#16a34a;--warn:#d97706;--bad:#dc2626;
-    }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(130deg,var(--bg),var(--bg2));color:#e2e8f0;min-height:100vh}
-    .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-    .sidebar{padding:18px;border-right:1px solid rgba(255,255,255,.08);background:rgba(2,6,23,.35);backdrop-filter: blur(8px)}
-    .brand{font-weight:800;font-size:20px;margin-bottom:18px}
-    .menu button{width:100%;text-align:left;padding:11px 12px;border:0;background:transparent;color:#cbd5e1;border-radius:10px;cursor:pointer;margin-bottom:6px;transition:.2s}
-    .menu button:hover,.menu button.active{background:rgba(37,99,235,.23);color:#fff;transform:translateX(4px)}
+    :root{--bg:#060d1f;--bg2:#0f1b3d;--card:#fff;--line:#e2e8f0;--txt:#0f172a;--muted:#64748b;--pri:#2563eb;--ok:#16a34a;--warn:#d97706}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,var(--bg),var(--bg2));color:#dbeafe}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{padding:18px;border-right:1px solid rgba(255,255,255,.1);background:rgba(2,6,23,.45)}
+    .logo{font-size:36px;font-weight:800;margin-bottom:14px}
+    .nav button{width:100%;border:0;background:transparent;color:#cbd5e1;text-align:left;padding:11px;border-radius:10px;cursor:pointer;margin-bottom:6px;transition:.2s}
+    .nav button.active,.nav button:hover{background:rgba(37,99,235,.25);color:#fff;transform:translateX(4px)}
     .main{padding:18px}
-    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-    .pill{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:12px}
-    .section{display:none;animation:fade .28s ease}.section.active{display:block}
-    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-    .panel{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 12px 35px rgba(2,6,23,.2)}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.col-12{grid-column:span 12}.col-8{grid-column:span 8}.col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}
-    @media(max-width:1100px){.layout{grid-template-columns:1fr}.sidebar{display:none}.col-8,.col-6,.col-4,.col-3{grid-column:span 12}}
-    label{display:block;font-size:13px;color:#334155;margin-bottom:4px}
-    input,select,textarea{width:100%;padding:10px;border:1px solid #dbe3ef;border-radius:10px;background:#fff}
-    .btn{border:1px solid #cbd5e1;background:#fff;padding:9px 12px;border-radius:10px;cursor:pointer}
-    .btn:hover{filter:brightness(.98)}
-    .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.good{background:#16a34a;border-color:#16a34a;color:#fff}.btn.bad{background:#ef4444;border-color:#ef4444;color:#fff}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;padding:9px 12px;border-radius:10px;cursor:pointer}
+    .btn.primary{background:var(--pri);border-color:var(--pri);color:#fff}
+    .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+    .panel{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 30px rgba(2,6,23,.2)}
+    .section{display:none;animation:fade .25s ease}.section.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
     .kpi{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px}
     .kpi b{display:block}
-    .stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-    .step{padding:9px;border-radius:10px;background:#e2e8f0;text-align:center;font-size:13px}.step.active{background:var(--primary);color:#fff}
-    .progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;background:var(--primary);transition:.2s}
-    table{width:100%;border-collapse:collapse} th,td{padding:9px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px}
-    .badge{padding:3px 8px;border-radius:999px;font-size:12px}.ok{background:#dcfce7;color:#166534}.warn{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}
-    .docrow{display:flex;justify-content:space-between;align-items:center;border:1px dashed #cbd5e1;border-radius:10px;padding:9px;margin:7px 0}
-    .muted{color:var(--muted)}
-    .tree{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px;margin-bottom:8px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}.c8{grid-column:span 8}.c12{grid-column:span 12}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{display:none}.c3,.c4,.c6,.c8{grid-column:span 12}}
+    label{display:block;font-size:13px;color:#334155;margin-bottom:4px}
+    input,select{width:100%;padding:10px;border:1px solid #dbe3ef;border-radius:10px}
+    table{width:100%;border-collapse:collapse} th,td{padding:9px;border-bottom:1px solid #e2e8f0;text-align:left}
+    .badge{padding:3px 8px;border-radius:999px;font-size:12px}.ok{background:#dcfce7;color:#166534}.warn{background:#fef3c7;color:#92400e}
+    .accordion{border:1px solid #dbe3ef;border-radius:12px;overflow:hidden;margin-bottom:9px}
+    .acc-head{background:#f8fafc;padding:10px;display:flex;justify-content:space-between;cursor:pointer}
+    .acc-body{display:none;padding:0 10px 8px}
+    .drawer{position:fixed;top:0;right:-560px;width:560px;max-width:100%;height:100%;background:#fff;color:#0f172a;box-shadow:-10px 0 35px rgba(2,6,23,.3);transition:.25s;z-index:20;overflow:auto}
+    .drawer.open{right:0}
+    .drawer-head{position:sticky;top:0;background:#fff;border-bottom:1px solid #e2e8f0;padding:12px;display:flex;justify-content:space-between;align-items:center}
+    .overlay{position:fixed;inset:0;background:rgba(2,6,23,.5);display:none;z-index:10}.overlay.show{display:block}
+    .stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}.step{padding:8px;border-radius:10px;background:#e2e8f0;text-align:center}.step.active{background:var(--pri);color:#fff}
+    .progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:8px}.progress span{display:block;height:100%;background:var(--pri)}
+    .docrow{display:flex;justify-content:space-between;align-items:center;border:1px dashed #cbd5e1;border-radius:10px;padding:8px;margin:6px 0}
+    .muted{color:var(--muted);font-size:13px}
   </style>
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">Hexonium</div>
-      <div class="menu">
-        <button class="active" data-target="personnel">👷 Personel</button>
-        <button data-target="documents">📁 Evraklar</button>
-        <button data-target="sites">🏗️ Şantiyeler</button>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Hexonium</div>
+    <div class="nav">
+      <button class="active" data-tab="personnel">👷 Personel</button>
+      <button data-tab="documents">📁 Evraklar</button>
+      <button data-tab="sites">🏗️ Şantiyeler</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <h2 style="margin:0">Operasyon Yönetim Sistemi</h2>
+      <div>
+        <button class="btn ghost" id="btnAdd">+ Ekle</button>
       </div>
-    </aside>
-    <main class="main">
-      <div class="top">
-        <h2 style="margin:0">Operasyon Yönetim Sistemi</h2>
-        <span class="pill" id="clock"></span>
+    </div>
+
+    <section id="personnel" class="section active">
+      <div class="kpis" id="kpis"></div>
+      <div class="panel">
+        <h3 style="margin-top:0">Personel Filtreleri</h3>
+        <div class="grid">
+          <div class="c4"><label>Şantiye</label><select id="fltSite"></select></div>
+          <div class="c4"><label>Ad Soyad</label><input id="fltName" placeholder="Ali Kaya" /></div>
+          <div class="c4"><label>İşe Göre</label><select id="fltJob"><option value="">Tümü</option><option>Demirci</option><option>Kalıpçı</option><option>İşçi</option><option>Mühendis</option></select></div>
+        </div>
+        <div class="muted" style="margin-top:8px">Demirci ve Kalıpçı ayrı widget/accordion gruplarında gösterilir.</div>
       </div>
 
-      <section id="personnel" class="section active">
-        <div class="cards" id="kpis"></div>
-        <div class="panel">
-          <h3 style="margin-top:0">Personel Ekleme Wizard</h3>
-          <div class="progress"><span id="wizardBar" style="width:33%"></span></div>
-          <div class="stepper"><div class="step active" data-step="1">1) Kişisel</div><div class="step" data-step="2">2) Ödeme</div><div class="step" data-step="3">3) Evrak</div></div>
+      <div class="panel" style="margin-top:12px">
+        <h3 style="margin-top:0">Personeller (Şantiye > İş Grubu)</h3>
+        <div id="personnelGrouped"></div>
+      </div>
+    </section>
 
-          <div id="w1" class="wstep">
-            <div class="grid">
-              <div class="col-3"><label>Ad*</label><input id="pFirst" /></div>
-              <div class="col-3"><label>Soyad*</label><input id="pLast" /></div>
-              <div class="col-3"><label>Telefon*</label><input id="pPhone" placeholder="+90555..." /></div>
-              <div class="col-3"><label>E-posta</label><input id="pEmail" type="email" /></div>
-              <div class="col-3"><label>TC No</label><input id="pTc" /></div>
-              <div class="col-3"><label>Doğum</label><input id="pBirth" type="date" /></div>
-              <div class="col-3"><label>İl</label><input id="pCity" /></div>
-              <div class="col-3"><label>İlçe</label><input id="pDistrict" /></div>
-              <div class="col-4"><label>Şantiye</label><select id="pSite"></select></div>
-              <div class="col-4"><label>Pozisyon</label><select id="pRole"><option>İşçi</option><option>Formen</option><option>Ustabaşı</option><option>Mühendis</option></select></div>
-              <div class="col-4"><label>Çalışma Tipi</label><select id="pEmp"><option>Kadrolu</option><option>Taşeron</option><option>Günlük</option></select></div>
-            </div>
-          </div>
-
-          <div id="w2" class="wstep" style="display:none">
-            <div class="grid">
-              <div class="col-4"><label id="salaryLabel">Maaş</label><input id="pSalary" type="number"/></div>
-              <div class="col-4"><label>Ödeme Tipi</label><select id="pPay"><option>Banka</option><option>Elden</option></select></div>
-              <div class="col-4"><label>Banka</label><input id="pBank"/></div>
-              <div class="col-6"><label>IBAN</label><input id="pIban" placeholder="TR.."/></div>
-              <div class="col-6"><label>Primary</label><select id="pPrimary"><option>Evet</option><option>Hayır</option></select></div>
-            </div>
-            <div class="muted" style="margin-top:8px">IBAN TR mod-97 kontrol edilir, sistemde rol bazlı maskeli/tam gösterim tasarlanmıştır.</div>
-          </div>
-
-          <div id="w3" class="wstep" style="display:none">
-            <div id="docTypeList"></div>
-          </div>
-
-          <div class="actions" style="margin-top:10px">
-            <button class="btn" id="prevStep">Geri</button>
-            <button class="btn primary" id="nextStep">Kaydet & Devam</button>
-            <button class="btn good" id="savePersonnel" style="display:none">Personeli Oluştur</button>
-          </div>
-          <div id="wizardMsg" class="muted" style="margin-top:8px"></div>
+    <section id="documents" class="section">
+      <div class="panel">
+        <h3 style="margin-top:0">Evraklar</h3>
+        <div class="grid">
+          <div class="c4"><label>Şantiye Filtresi</label><select id="docSite"></select></div>
+          <div class="c4"><label>Personel</label><select id="docPersonnel"></select></div>
+          <div class="c4"><label>Tür</label><select id="docType"><option value="">Tümü</option></select></div>
         </div>
+        <table id="docsTable" style="margin-top:10px"></table>
+      </div>
+    </section>
 
-        <div class="panel" style="margin-top:12px">
-          <h3 style="margin-top:0">Personel Listesi</h3>
-          <table id="personnelTable"></table>
-        </div>
-      </section>
+    <section id="sites" class="section">
+      <div class="panel">
+        <h3 style="margin-top:0">Şantiye Listesi (Gerçek zamanlı)</h3>
+        <table id="sitesTable"></table>
+      </div>
+    </section>
+  </main>
+</div>
 
-      <section id="documents" class="section">
-        <div class="panel">
-          <h3 style="margin-top:0">Evrak Yönetimi (Dosya Gezgini)</h3>
-          <div class="grid">
-            <div class="col-3"><label>Şantiye</label><select id="fSite"></select></div>
-            <div class="col-3"><label>Personel</label><select id="fPersonnel"></select></div>
-            <div class="col-3"><label>Evrak Türü</label><select id="fType"><option value="">Tümü</option></select></div>
-            <div class="col-3"><label>Arama</label><input id="fSearch" placeholder="dosya adı"/></div>
-          </div>
-          <div class="grid" style="margin-top:10px">
-            <div class="col-3" id="treePanel"></div>
-            <div class="col-6"><table id="docsTable"></table></div>
-            <div class="col-3"><div class="tree" id="docDetail">Bir evrak seçin.</div></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="sites" class="section">
-        <div class="panel">
-          <h3 style="margin-top:0">Şantiye Yönetimi</h3>
-          <div class="grid">
-            <div class="col-3"><label>Kod</label><input id="sCode"/></div>
-            <div class="col-4"><label>Ad</label><input id="sName"/></div>
-            <div class="col-3"><label>Şehir</label><input id="sCity"/></div>
-            <div class="col-2"><label>Durum</label><select id="sStatus"><option>Aktif</option><option>Pasif</option></select></div>
-            <div class="col-12"><label><input type="checkbox" id="autoPersonnel" checked /> Şantiye ekleyince otomatik örnek personel oluştur</label></div>
-          </div>
-          <div class="actions" style="margin-top:10px"><button class="btn primary" id="addSite">Şantiye Ekle</button></div>
-        </div>
-
-        <div class="panel" style="margin-top:12px">
-          <h3 style="margin-top:0">Şantiye Listesi</h3>
-          <table id="sitesTable"></table>
-        </div>
-      </section>
-    </main>
+<div id="overlay" class="overlay"></div>
+<aside id="drawer" class="drawer">
+  <div class="drawer-head">
+    <b id="drawerTitle">Ekleme Paneli</b>
+    <button class="btn" id="closeDrawer">Kapat</button>
   </div>
+  <div style="padding:12px">
+    <div class="actions" style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn primary" id="modePersonnel">Personel Ekle</button>
+      <button class="btn" id="modeSite">Şantiye Ekle</button>
+    </div>
+
+    <div id="personnelForm">
+      <div class="progress"><span id="wizBar" style="width:33%"></span></div>
+      <div class="stepper"><div class="step active" data-step="1">1) Kişisel</div><div class="step" data-step="2">2) Ödeme</div><div class="step" data-step="3">3) Evrak</div></div>
+
+      <div id="s1" class="wiz">
+        <div class="grid">
+          <div class="c6"><label>Ad*</label><input id="pFirst"></div>
+          <div class="c6"><label>Soyad*</label><input id="pLast"></div>
+          <div class="c6"><label>Telefon*</label><input id="pPhone" placeholder="+90555..."></div>
+          <div class="c6"><label>E-posta</label><input id="pEmail"></div>
+          <div class="c6"><label>Şantiye</label><select id="pSite"></select></div>
+          <div class="c6"><label>İş</label><select id="pJob"><option>Demirci</option><option>Kalıpçı</option><option>İşçi</option><option>Mühendis</option></select></div>
+        </div>
+      </div>
+
+      <div id="s2" class="wiz" style="display:none">
+        <div class="grid">
+          <div class="c6"><label>Çalışma Tipi</label><select id="pEmp"><option>Kadrolu</option><option>Taşeron</option><option>Günlük</option></select></div>
+          <div class="c6"><label id="moneyLabel">Maaş</label><input id="pMoney" type="number"></div>
+          <div class="c6"><label>Ödeme</label><select id="pPay"><option>Banka</option><option>Elden</option></select></div>
+          <div class="c6"><label>IBAN</label><input id="pIban" placeholder="TR..."></div>
+        </div>
+      </div>
+
+      <div id="s3" class="wiz" style="display:none"><div id="docUploadRows"></div></div>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" id="prev">Geri</button>
+        <button class="btn primary" id="next">Kaydet & Devam</button>
+        <button class="btn primary" id="createPersonnel" style="display:none">Personel Oluştur</button>
+      </div>
+      <div class="muted" id="msg" style="margin-top:8px"></div>
+    </div>
+
+    <div id="siteForm" style="display:none">
+      <div class="grid">
+        <div class="c4"><label>Kod</label><input id="sCode"></div>
+        <div class="c4"><label>Ad</label><input id="sName"></div>
+        <div class="c4"><label>Şehir</label><input id="sCity"></div>
+        <div class="c12"><label><input type="checkbox" id="autoGen" checked/> Şantiye ekleyince otomatik personel üret</label></div>
+      </div>
+      <button class="btn primary" style="margin-top:10px" id="createSite">Şantiye Oluştur</button>
+      <div class="muted" style="margin-top:8px">Yeni şantiye tüm filtre/dropdown/listelerde anında görünür.</div>
+    </div>
+  </div>
+</aside>
 
 <script>
-const docTypes=["ise_giris","sozlesme","ibraname","isg","kkd","istifa","cikis_bildirgesi"];
+const docTypes=['ise_giris','sozlesme','ibraname','isg','kkd','istifa','cikis_bildirgesi'];
 let sites=[{id:1,code:'SNT-001',name:'Merkez Şantiye',city:'İstanbul',status:'Aktif'},{id:2,code:'SNT-002',name:'Ankara Şantiye',city:'Ankara',status:'Aktif'}];
-let personnel=[{id:1,firstName:'Ali',lastName:'Kaya',phone:'+905551112233',siteId:1,status:'Aktif',role:'İşçi',employment:'Kadrolu'},{id:2,firstName:'Ayşe',lastName:'Yıldız',phone:'+905551112244',siteId:2,status:'Aktif',role:'Mühendis',employment:'Kadrolu'}];
-let documents=[{id:1,personnelId:1,siteId:1,type:'sozlesme',name:'sozlesme-ali-v1.pdf',version:1,size:123400,status:'Yüklü'}];
-let step=1, selectedDoc=null;
-const draft={docs:{}};
+let personnel=[
+  {id:1,firstName:'Ali',lastName:'Kaya',phone:'+905551112233',siteId:1,status:'Aktif',job:'Demirci',employment:'Kadrolu'},
+  {id:2,firstName:'Ayşe',lastName:'Yıldız',phone:'+905551112244',siteId:2,status:'Aktif',job:'Kalıpçı',employment:'Kadrolu'},
+  {id:3,firstName:'Mehmet',lastName:'Usta',phone:'+905551112255',siteId:1,status:'Aktif',job:'Demirci',employment:'Taşeron'}
+];
+let documents=[{id:1,personnelId:1,siteId:1,type:'sozlesme',name:'sozlesme-ali.pdf',version:1,status:'Yüklü'}];
+let selectedTab='personnel', step=1, draftDocs={};
 
-const q=(s)=>document.querySelector(s), qa=(s)=>[...document.querySelectorAll(s)];
-setInterval(()=>q('#clock').textContent=new Date().toLocaleString('tr-TR'),1000);
+const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)];
+const openDrawer=()=>{q('#drawer').classList.add('open');q('#overlay').classList.add('show')};
+const closeDrawer=()=>{q('#drawer').classList.remove('open');q('#overlay').classList.remove('show')};
 
-qa('.menu button').forEach(b=>b.onclick=()=>{qa('.menu button').forEach(x=>x.classList.remove('active'));b.classList.add('active');qa('.section').forEach(s=>s.classList.remove('active'));q('#'+b.dataset.target).classList.add('active');renderAll();});
+qa('.nav button').forEach(b=>b.onclick=()=>{qa('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');qa('.section').forEach(s=>s.classList.remove('active'));q('#'+b.dataset.tab).classList.add('active');selectedTab=b.dataset.tab;render();});
+q('#btnAdd').onclick=()=>{openDrawer(); if(selectedTab==='sites'){switchMode('site')} else switchMode('personnel')};
+q('#closeDrawer').onclick=closeDrawer; q('#overlay').onclick=closeDrawer;
 
-function renderSelects(){
-  const siteOptions='<option value="">Seçiniz</option>'+sites.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  q('#pSite').innerHTML=siteOptions; q('#fSite').innerHTML='<option value="">Tüm şantiyeler</option>'+sites.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  q('#fPersonnel').innerHTML='<option value="">Tüm personeller</option>'+personnel.map(p=>`<option value="${p.id}">${p.firstName} ${p.lastName}</option>`).join('');
-  q('#fType').innerHTML='<option value="">Tümü</option>'+docTypes.map(t=>`<option>${t}</option>`).join('');
+function switchMode(mode){
+  q('#personnelForm').style.display=mode==='personnel'?'block':'none';
+  q('#siteForm').style.display=mode==='site'?'block':'none';
+  q('#drawerTitle').textContent=mode==='personnel'?'Yeni Personel Ekle':'Yeni Şantiye Ekle';
+  q('#modePersonnel').classList.toggle('primary',mode==='personnel');
+  q('#modeSite').classList.toggle('primary',mode==='site');
+}
+q('#modePersonnel').onclick=()=>switchMode('personnel');
+q('#modeSite').onclick=()=>switchMode('site');
+
+function fillSelects(){
+  const sopts='<option value="">Tümü</option>'+sites.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  q('#fltSite').innerHTML=sopts; q('#docSite').innerHTML=sopts;
+  q('#pSite').innerHTML='<option value="">Seçiniz</option>'+sites.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  q('#docPersonnel').innerHTML='<option value="">Tümü</option>'+personnel.map(p=>`<option value="${p.id}">${p.firstName} ${p.lastName}</option>`).join('');
+  q('#docType').innerHTML='<option value="">Tümü</option>'+docTypes.map(t=>`<option>${t}</option>`).join('');
 }
 
 function renderKpis(){
-  const active=personnel.filter(p=>p.status==='Aktif').length;
-  const req=4;const completion=Math.round((documents.length/(personnel.length*req||1))*100);
-  q('#kpis').innerHTML=`<div class="kpi"><b>Aktif Personel</b>${active}</div><div class="kpi"><b>Evrak Adedi</b>${documents.length}</div><div class="kpi"><b>Tamamlanma</b>%${Math.min(100,completion)}</div>`;
+  q('#kpis').innerHTML=`<div class='kpi'><b>Aktif Personel</b>${personnel.filter(p=>p.status==='Aktif').length}</div><div class='kpi'><b>Evrak Adedi</b>${documents.length}</div><div class='kpi'><b>Şantiye</b>${sites.length}</div>`;
 }
 
-function renderTables(){
-  q('#sitesTable').innerHTML='<thead><tr><th>Kod</th><th>Ad</th><th>Şehir</th><th>Durum</th><th>Aksiyon</th></tr></thead><tbody>'+sites.map(s=>`<tr><td>${s.code}</td><td>${s.name}</td><td>${s.city}</td><td><span class="badge ${s.status==='Aktif'?'ok':'warn'}">${s.status}</span></td><td><button class="btn" onclick="prefillPersonnel(${s.id})">Personel Ekle</button></td></tr>`).join('')+'</tbody>';
+function groupPersonnel(){
+  const site=Number(q('#fltSite').value)||null, name=(q('#fltName').value||'').toLowerCase(), job=q('#fltJob').value;
+  let rows=personnel.filter(p=>(!site||p.siteId===site)&&(!job||p.job===job)&&(`${p.firstName} ${p.lastName}`.toLowerCase().includes(name)));
+  const bySite={}; rows.forEach(p=>{const s=sites.find(x=>x.id===p.siteId)?.name||'Atanmamış';bySite[s]=bySite[s]||{};bySite[s][p.job]=bySite[s][p.job]||[];bySite[s][p.job].push(p)});
+  let html='';
+  Object.entries(bySite).forEach(([siteName,jobs])=>{
+    html+=`<div class='accordion'><div class='acc-head' onclick='toggleAcc(this)'><b>${siteName}</b><span>${Object.values(jobs).flat().length} kişi</span></div><div class='acc-body'>`;
+    Object.entries(jobs).forEach(([jobName,items])=>{
+      html+=`<div class='accordion' style='margin-top:8px'><div class='acc-head' onclick='toggleAcc(this)'><span>${jobName}</span><span>${items.length}</span></div><div class='acc-body'><table><thead><tr><th>Ad Soyad</th><th>Telefon</th><th>Durum</th><th>Aksiyon</th></tr></thead><tbody>${items.map(p=>`<tr><td>${p.firstName} ${p.lastName}</td><td>${p.phone}</td><td><span class='badge ${p.status==='Aktif'?'ok':'warn'}'>${p.status}</span></td><td><button class='btn' onclick='terminate(${p.id})'>Çıkış İşlemi</button></td></tr>`).join('')}</tbody></table></div></div>`;
+    });
+    html+='</div></div>';
+  });
+  q('#personnelGrouped').innerHTML=html||'<div class="muted">Filtreye uygun personel bulunamadı.</div>';
+}
+window.toggleAcc=(el)=>{const body=el.nextElementSibling;body.style.display=body.style.display==='block'?'none':'block'};
 
-  q('#personnelTable').innerHTML='<thead><tr><th>Ad Soyad</th><th>Şantiye</th><th>Durum</th><th>Pozisyon</th><th>Evrak Oranı</th><th>Aksiyon</th></tr></thead><tbody>'+
-    personnel.map(p=>{const done=documents.filter(d=>d.personnelId===p.id).length;return `<tr><td>${p.firstName} ${p.lastName}</td><td>${(sites.find(s=>s.id===p.siteId)||{}).name||'-'}</td><td><span class="badge ${p.status==='Aktif'?'ok':'warn'}">${p.status}</span></td><td>${p.role}</td><td>${done}/6</td><td><button class="btn" onclick="terminate(${p.id})">Çıkış İşlemi</button></td></tr>`}).join('')+'</tbody>';
+function renderSites(){
+  q('#sitesTable').innerHTML='<thead><tr><th>Kod</th><th>Ad</th><th>Şehir</th><th>Durum</th><th>Aksiyon</th></tr></thead><tbody>'+sites.map(s=>`<tr><td>${s.code}</td><td>${s.name}</td><td>${s.city}</td><td><span class='badge ok'>${s.status}</span></td><td><button class='btn' onclick='openAddForSite(${s.id})'>Bu Şantiyeye Personel Ekle</button></td></tr>`).join('')+'</tbody>';
+}
+window.openAddForSite=(siteId)=>{selectedTab='personnel';qa('.nav button').forEach(b=>{b.classList.toggle('active',b.dataset.tab==='personnel')});qa('.section').forEach(s=>s.classList.remove('active'));q('#personnel').classList.add('active');openDrawer();switchMode('personnel');q('#pSite').value=String(siteId)};
+
+function renderDocs(){
+  const sid=Number(q('#docSite').value)||null,pid=Number(q('#docPersonnel').value)||null,typ=q('#docType').value;
+  const rows=documents.filter(d=>(!sid||d.siteId===sid)&&(!pid||d.personnelId===pid)&&(!typ||d.type===typ));
+  q('#docsTable').innerHTML='<thead><tr><th>Dosya</th><th>Tür</th><th>Personel</th><th>Şantiye</th></tr></thead><tbody>'+rows.map(d=>`<tr><td>${d.name}</td><td>${d.type}</td><td>${personnel.find(p=>p.id===d.personnelId)?.firstName||'-'}</td><td>${sites.find(s=>s.id===d.siteId)?.name||'-'}</td></tr>`).join('')+'</tbody>';
 }
 
 function renderWizard(){
-  qa('.step').forEach(x=>x.classList.toggle('active',+x.dataset.step===step));
-  ['#w1','#w2','#w3'].forEach((id,i)=>q(id).style.display=(i+1===step?'block':'none'));
-  q('#wizardBar').style.width=(step/3*100)+'%';
-  q('#savePersonnel').style.display=step===3?'inline-block':'none';
-  q('#salaryLabel').textContent=q('#pEmp').value==='Günlük'?'Günlük Yevmiye':'Maaş';
-  q('#docTypeList').innerHTML=docTypes.map(t=>{
-    const files=draft.docs[t]||[];
-    return `<div class="docrow"><div><b>${t}</b><div class="muted">${files.length} dosya yüklendi</div></div><div class="actions"><input type="file" multiple onchange="addDocFiles('${t}',this.files)"/><button class="btn" onclick="alert('${t} için yüklenen: ${files.length}')">Aç</button></div></div>`
-  }).join('');
+  qa('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===step));
+  ['#s1','#s2','#s3'].forEach((id,i)=>q(id).style.display=(i+1===step?'block':'none'));
+  q('#wizBar').style.width=(step/3*100)+'%';
+  q('#createPersonnel').style.display=step===3?'inline-block':'none';
+  q('#moneyLabel').textContent=q('#pEmp').value==='Günlük'?'Günlük Yevmiye':'Maaş';
+  q('#docUploadRows').innerHTML=docTypes.map(t=>`<div class='docrow'><div><b>${t}</b><div class='muted'>${(draftDocs[t]||[]).length} dosya</div></div><div><input type='file' multiple onchange="addFiles('${t}',this.files)"></div></div>`).join('');
 }
+window.addFiles=(type,files)=>{draftDocs[type]=draftDocs[type]||[];[...files].forEach(f=>draftDocs[type].push(f));renderWizard();};
 
-function renderDocuments(){
-  const fs=q('#fSite').value, fp=q('#fPersonnel').value, ft=q('#fType').value, search=q('#fSearch').value.toLowerCase();
-  let rows=documents.filter(d=>(!fs||d.siteId==fs)&&(!fp||d.personnelId==fp)&&(!ft||d.type===ft)&&(!search||d.name.toLowerCase().includes(search)));
-  q('#docsTable').innerHTML='<thead><tr><th>Dosya</th><th>Tür</th><th>Personel</th><th>v</th><th>Durum</th></tr></thead><tbody>'+rows.map(d=>`<tr onclick="selectDoc(${d.id})" style="cursor:pointer"><td>${d.name}</td><td>${d.type}</td><td>${personnel.find(p=>p.id===d.personnelId)?.firstName||'-'}</td><td>v${d.version}</td><td><span class="badge ok">${d.status}</span></td></tr>`).join('')+'</tbody>';
-  q('#treePanel').innerHTML=sites.map(s=>`<div class="tree"><b>${s.name}</b><br><span class="muted">${personnel.filter(p=>p.siteId===s.id).length} personel</span></div>`).join('');
-  if(selectedDoc){const d=documents.find(x=>x.id===selectedDoc);if(d) q('#docDetail').innerHTML=`<b>${d.name}</b><p class='muted'>Tür: ${d.type}<br>Boyut: ${(d.size/1024).toFixed(1)} KB<br>Versiyon: v${d.version}</p><div class='actions'><button class='btn'>İndir</button><button class='btn'>Yeni Versiyon</button><button class='btn bad' onclick='deleteDoc(${d.id})'>Soft Sil</button></div>`}
-}
+function trIban(v){v=(v||'').replace(/\s+/g,'').toUpperCase();if(!/^TR\d{24}$/.test(v))return false;const m=v.slice(4)+v.slice(0,4);const n=[...m].map(c=>/[A-Z]/.test(c)?c.charCodeAt(0)-55:c).join('');let r=0;for(const c of n){r=(r*10+Number(c))%97;}return r===1;}
 
-function renderAll(){renderSelects();renderKpis();renderTables();renderWizard();renderDocuments();}
-
-function addDocFiles(type, files){
-  const arr=draft.docs[type]||(draft.docs[type]=[]);
-  [...files].forEach(f=>arr.push({name:f.name,size:f.size,type}));
-  renderWizard();
-}
-
-function isValidTRIban(iban){
-  iban=(iban||'').replace(/\s+/g,'').toUpperCase();
-  if(!/^TR\d{24}$/.test(iban)) return false;
-  const moved=iban.slice(4)+iban.slice(0,4);
-  const num=[...moved].map(ch=>/[A-Z]/.test(ch)?(ch.charCodeAt(0)-55):ch).join('');
-  let rem=0; for(const c of num){rem=(rem*10+Number(c))%97;} return rem===1;
-}
-
-q('#nextStep').onclick=()=>{
-  if(step===1){
-    if(!q('#pFirst').value||!q('#pLast').value||!/^\+?[0-9]{10,15}$/.test(q('#pPhone').value)){q('#wizardMsg').textContent='Ad, Soyad ve Telefon zorunlu / format geçerli olmalı.';return;}
-    q('#wizardMsg').textContent='';
-  }
-  if(step===2 && q('#pPay').value==='Banka' && q('#pIban').value && !isValidTRIban(q('#pIban').value)){q('#wizardMsg').textContent='IBAN doğrulaması başarısız (TR mod-97).';return;}
-  if(step<3) step++; renderWizard();
+q('#next').onclick=()=>{
+  if(step===1 && (!q('#pFirst').value||!q('#pLast').value||!/^\+?[0-9]{10,15}$/.test(q('#pPhone').value))){q('#msg').textContent='Ad, Soyad, Telefon zorunlu.';return;}
+  if(step===2 && q('#pPay').value==='Banka' && q('#pIban').value && !trIban(q('#pIban').value)){q('#msg').textContent='IBAN hatalı (TR mod-97).';return;}
+  q('#msg').textContent=''; if(step<3)step++; renderWizard();
 };
-q('#prevStep').onclick=()=>{if(step>1)step--;renderWizard();};
+q('#prev').onclick=()=>{if(step>1)step--;renderWizard();};
 q('#pEmp').onchange=renderWizard;
 
-q('#savePersonnel').onclick=()=>{
+q('#createPersonnel').onclick=()=>{
   const id=Math.max(0,...personnel.map(p=>p.id))+1;
-  const p={id,firstName:q('#pFirst').value,lastName:q('#pLast').value,phone:q('#pPhone').value,siteId:Number(q('#pSite').value)||null,status:'Aktif',role:q('#pRole').value,employment:q('#pEmp').value};
+  const p={id,firstName:q('#pFirst').value,lastName:q('#pLast').value,phone:q('#pPhone').value,siteId:Number(q('#pSite').value)||sites[0].id,status:'Aktif',job:q('#pJob').value,employment:q('#pEmp').value};
   personnel.push(p);
-  Object.entries(draft.docs).forEach(([type,arr])=>arr.forEach((f,idx)=>documents.push({id:Math.max(0,...documents.map(d=>d.id))+1,personnelId:id,siteId:p.siteId,type,name:f.name||`${type}-${id}.pdf`,version:idx+1,size:f.size||1000,status:'Yüklü'})));
-  q('#wizardMsg').textContent='Personel ve evraklar kaydedildi.';
-  ['pFirst','pLast','pPhone','pEmail','pTc','pBirth','pCity','pDistrict','pSalary','pBank','pIban'].forEach(i=>q('#'+i).value='');
-  draft.docs={}; step=1; renderAll();
+  Object.entries(draftDocs).forEach(([t,arr])=>arr.forEach((f,idx)=>documents.push({id:Math.max(0,...documents.map(d=>d.id))+1,personnelId:id,siteId:p.siteId,type:t,name:f.name||`${t}-${id}.pdf`,version:idx+1,status:'Yüklü'})));
+  ['pFirst','pLast','pPhone','pEmail','pIban','pMoney'].forEach(i=>q('#'+i).value=''); draftDocs={}; step=1; closeDrawer(); render();
 };
 
-q('#addSite').onclick=()=>{
+q('#createSite').onclick=()=>{
   if(!q('#sCode').value||!q('#sName').value){alert('Kod ve ad gerekli');return;}
   const id=Math.max(0,...sites.map(s=>s.id))+1;
-  const site={id,code:q('#sCode').value,name:q('#sName').value,city:q('#sCity').value||'-',status:q('#sStatus').value};
-  sites.push(site);
-  if(q('#autoPersonnel').checked){
-    personnel.push({id:Math.max(0,...personnel.map(p=>p.id))+1,firstName:'Yeni',lastName:'Personel',phone:'+905550000000',siteId:id,status:'Aktif',role:'İşçi',employment:'Kadrolu'});
-  }
-  ['sCode','sName','sCity'].forEach(i=>q('#'+i).value='');
-  renderAll();
+  const s={id,code:q('#sCode').value,name:q('#sName').value,city:q('#sCity').value||'-',status:'Aktif'}; sites.push(s);
+  if(q('#autoGen').checked){personnel.push({id:Math.max(0,...personnel.map(p=>p.id))+1,firstName:'Oto',lastName:'Personel',phone:'+905550000000',siteId:id,status:'Aktif',job:'İşçi',employment:'Kadrolu'})}
+  ['sCode','sName','sCity'].forEach(i=>q('#'+i).value=''); closeDrawer(); render();
 };
 
-window.prefillPersonnel=(siteId)=>{q('[data-target="personnel"]').click();q('#pSite').value=String(siteId);q('#wizardMsg').textContent='Şantiye otomatik seçildi. Personeli hızlıca ekleyebilirsiniz.';};
-window.terminate=(pid)=>{
-  const hasExit=documents.some(d=>d.personnelId===pid && d.type==='cikis_bildirgesi');
-  const p=personnel.find(x=>x.id===pid);
-  if(!p) return;
-  if(!hasExit){p.status='Taslak Çıkış';alert('⚠️ Çıkış evrakları eksik. Lütfen Çıkış Bildirgesi yükleyin.');}
-  else p.status='Ayrıldı';
-  renderAll();
-};
-window.selectDoc=(id)=>{selectedDoc=id;renderDocuments();};
-window.deleteDoc=(id)=>{documents=documents.filter(d=>d.id!==id);selectedDoc=null;renderDocuments();};
-['#fSite','#fPersonnel','#fType','#fSearch'].forEach(sel=>q(sel).addEventListener('input',renderDocuments));
+window.terminate=(pid)=>{const p=personnel.find(x=>x.id===pid);if(!p)return;const has=documents.some(d=>d.personnelId===pid&&d.type==='cikis_bildirgesi');if(!has){p.status='Taslak Çıkış';alert('⚠️ Çıkış Bildirgesi eksik!')}else p.status='Ayrıldı';render();};
 
-renderAll();
+['#fltSite','#fltName','#fltJob','#docSite','#docPersonnel','#docType'].forEach(id=>q(id).addEventListener('input',()=>{groupPersonnel();renderDocs()}));
+
+function render(){fillSelects();renderKpis();groupPersonnel();renderSites();renderDocs();renderWizard();}
+render();
 </script>
 </body>
 </html>

@@ -70,6 +70,9 @@ Bu repo içinde backend bağımlılığına `email-validator` eklendi.
 
 
 ## Canlı UI Özellikleri
+- Sağ üst “+ Ekle” butonu ile açılan yan panel (personel/şantiye modu)
+- Personellerde şantiye + ad soyad + işe göre filtre ve accordion gruplama
+- Şantiye ekleme sonrası tüm sayfalarda gerçek zamanlı görünürlük
 - 3 aşamalı personel wizard (validasyon + IBAN mod-97 kontrol)
 - Evrak modülünde dosya gezgini, filtreler, detay paneli
 - Şantiye ekleyince otomatik örnek personel oluşturma
