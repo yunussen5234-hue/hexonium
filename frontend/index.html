@@ -1,1 +1,32 @@
-<!doctype html><html lang="tr"><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hexonium Yönetim Paneli</title>
+    <style>
+      body { margin: 0; font-family: Arial, sans-serif; background:#f6f7fb; color:#1f2937; }
+      .topbar { background:#0f172a; color:#fff; padding:14px 20px; font-weight:700; }
+      .container { max-width:1100px; margin:20px auto; padding:0 12px; }
+      .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; }
+      .card { background:#fff; border-radius:10px; padding:14px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+      .muted { color:#6b7280; font-size:14px; }
+      .notice { margin-top:14px; background:#ecfeff; border:1px solid #a5f3fc; padding:10px; border-radius:8px; }
+      code { background:#e5e7eb; padding:2px 5px; border-radius:4px; }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">Hexonium Yönetim Paneli</div>
+    <div class="container">
+      <div class="grid">
+        <div class="card"><h3>Şantiyeler</h3><p class="muted">Liste, filtre, detay ve atama işlemleri.</p></div>
+        <div class="card"><h3>Personeller</h3><p class="muted">Profil, durum, şantiye geçmişi ve düzenleme.</p></div>
+        <div class="card"><h3>IBAN Yönetimi</h3><p class="muted">Maskeli/Tam görüntüleme, primary yönetimi.</p></div>
+        <div class="card"><h3>Audit Log</h3><p class="muted">Kritik işlemler için takip ekranı.</p></div>
+      </div>
+      <div class="notice">
+        Docker frontend artık npm bağımlılığı olmadan açılır. Adres: <code>http://localhost:5173</code>
+      </div>
+    </div>
+  </body>
+</html>

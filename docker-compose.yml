@@ -6,6 +6,7 @@ services:
       POSTGRES_USER: hexonium
       POSTGRES_PASSWORD: hexonium
     ports: ["5432:5432"]
+
   backend:
     build: ./backend
     environment:
@@ -14,10 +15,8 @@ services:
       IBAN_ENCRYPTION_KEY: jF8m8wJxY6R2gJ8sFQpo4YHc_8j9nY3kQj3v0v8P7Q4=
     ports: ["8000:8000"]
     depends_on: [db]
+
   frontend:
-    build:
-      context: ./frontend
-      args:
-        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org/}
-    ports: ["5173:5173"]
+    build: ./frontend
+    ports: ["5173:80"]
     depends_on: [backend]

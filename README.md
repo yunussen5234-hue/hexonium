@@ -90,29 +90,21 @@ Sebep: `cp` Linux komutu.
 Çözüm: CMD'de `copy`, PowerShell'de `Copy-Item` kullanın.
 
 
-### Hata: `docker compose up --build` sırasında `frontend -> RUN npm install` uzun süre takılıyor
-Sebep: Ağ/proxy/DNS nedeniyle npm registry'e erişim yavaş veya bloklu olabilir.
+### Hata: `docker compose up --build` sırasında `frontend` adımında takılıyor
+Sebep: Önceki sürümde frontend build aşamasında `npm install` gerekiyordu. Bazı ağ/proxy ortamlarında bu adım kilitlenebiliyordu.
 
-Çözüm adımları (CMD):
+✅ Güncel sürümde frontend Docker imajı **npm çalıştırmaz** (nginx ile statik servis).
+Bu yüzden artık doğrudan şu komut yeterli:
 
 ```cmd
 docker compose down
-set NPM_REGISTRY=https://registry.npmjs.org/
-docker compose build --no-cache frontend
-docker compose up
+docker compose up --build
 ```
 
-Kurumsal ağ/proxy varsa (PowerShell örneği):
-
-```powershell
-$env:NPM_REGISTRY = "https://registry.npmjs.org/"
-docker compose build --no-cache frontend
-```
-
-Log'u daha detaylı görmek için:
+Detaylı log için (doğru compose global flag sözdizimi):
 
 ```cmd
-docker compose build --no-cache --progress=plain frontend
+docker compose --progress=plain build --no-cache frontend
 ```
 
 ### Hata: `docker compose` komutu yok
