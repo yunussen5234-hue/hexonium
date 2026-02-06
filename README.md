@@ -67,3 +67,11 @@ docker compose up
 ```
 
 Bu repo içinde backend bağımlılığına `email-validator` eklendi.
+
+
+## Canlı UI Özellikleri
+- 3 aşamalı personel wizard (validasyon + IBAN mod-97 kontrol)
+- Evrak modülünde dosya gezgini, filtreler, detay paneli
+- Şantiye ekleyince otomatik örnek personel oluşturma
+- Her evrak türü yanında ayrı yükleme butonu ve çoklu dosya desteği
+- Sayfalar arası geçiş animasyonları
