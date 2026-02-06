@@ -55,3 +55,15 @@ uvicorn app.main:app --reload
 
 ### Frontend
 Frontend Docker içinde nginx ile statik servis edilir (`frontend/index.html`).
+
+
+## Backend Hatası: `email-validator is not installed`
+Eğer `docker compose up --build` logunda bu hatayı görürseniz, image eski cache ile kalmış olabilir.
+
+```cmd
+docker compose down
+docker compose build --no-cache backend
+docker compose up
+```
+
+Bu repo içinde backend bağımlılığına `email-validator` eklendi.
