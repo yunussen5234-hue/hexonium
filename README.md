@@ -31,29 +31,78 @@ Eğer hala `npm is not recognized` görüyorsanız:
 
 ---
 
-## 2) En Kolay Kurulum (Docker ile - npm/Python zorunlu değil)
+## 2) Windows CMD ile Docker Kurulumu (ÖNERİLEN)
 
-Bu yöntemle host makinede npm kurulu olmasa da proje ayağa kalkar.
+Sizde hata veren nokta doğru: **CMD içinde `bash` ve `cp` komutları çalışmaz**.
+Bu yüzden aşağıdaki komutları **aynen CMD'de** kullanın.
 
-```bash
-cp .env.example backend/.env
+### Adım 1: Proje klasörüne girin
+
+```cmd
+cd C:\Users\Yunus Emre\Desktop\hexonium-codex-create-project-plan-for-management-system
+```
+
+### Adım 2: `.env` dosyasını oluşturun (CMD)
+
+```cmd
+copy .env.example backend\.env
+```
+
+> Eğer `copy` başarısız olursa PowerShell alternatifi:
+>
+> ```powershell
+> Copy-Item .env.example backend/.env
+> ```
+
+### Adım 3: Docker servislerini başlatın
+
+```cmd
 docker compose up --build
 ```
 
-Servisler:
+### Adım 4: Uygulama adresleri
+- Frontend: `http://localhost:5173`
 - Backend: `http://localhost:8000`
 - Swagger: `http://localhost:8000/docs`
-- Frontend: `http://localhost:5173`
 
-İlk çalıştırmada seed için (opsiyonel):
+### Adım 5: Seed veri yükleme (yeni CMD penceresi)
 
-```bash
+```cmd
 docker compose exec backend python seed.py
+```
+
+### Adım 6: Durdurma
+
+```cmd
+docker compose down
 ```
 
 ---
 
-## 3) Lokal Kurulum (Docker'sız)
+## 3) Sık Hata ve Net Çözüm
+
+### Hata: `bash ... /bin/bash no such file`
+Sebep: WSL/Git Bash ortamı yok.
+Çözüm: CMD'de `bash` kullanmayın, direkt `docker compose ...` kullanın.
+
+### Hata: `'cp' is not recognized`
+Sebep: `cp` Linux komutu.
+Çözüm: CMD'de `copy`, PowerShell'de `Copy-Item` kullanın.
+
+### Hata: `docker compose` komutu yok
+Çözüm:
+1. Docker Desktop kurulu mu kontrol edin.
+2. Docker Desktop açık mı kontrol edin.
+3. Yeni CMD açıp tekrar deneyin:
+
+```cmd
+docker --version
+docker compose version
+```
+
+---
+
+## 4) Lokal Kurulum (Docker'sız)
 
 ## Backend
 
@@ -82,14 +131,14 @@ npm run dev
 
 ---
 
-## 4) Roller
+## 5) Roller
 - Admin
 - Muhasebe
 - IK
 - Santiye Sefi
 - Goruntuleyici
 
-## 5) Test
+## 6) Test
 
 ```bash
 cd backend
