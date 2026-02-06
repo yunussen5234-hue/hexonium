@@ -1,0 +1,2 @@
+-- Initial schema migration for Hexonium
+-- Run with: psql $DATABASE_URL -f migrations/001_init.sql
