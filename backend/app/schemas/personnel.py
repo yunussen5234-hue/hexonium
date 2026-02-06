@@ -10,7 +10,7 @@ class PersonnelBase(BaseModel):
     first_name: str
     last_name: str
     phone: str = Field(pattern=r"^\+?[0-9]{10,15}$")
-    email: EmailStr
+    email: EmailStr | None = None
     birth_date: date | None = None
     hire_date: date
     termination_date: date | None = None
@@ -18,8 +18,12 @@ class PersonnelBase(BaseModel):
     employment_type: EmploymentType
     daily_wage: float | None = None
     salary: float | None = None
+    payment_type: str | None = None
     status: PersonnelStatus = PersonnelStatus.ACTIVE
     current_site_id: int | None = None
+    address: str | None = None
+    city: str | None = None
+    district: str | None = None
     notes: str | None = None
 
 
@@ -43,6 +47,7 @@ class PersonnelOut(BaseModel):
     role_type: str
     hire_date: date
     current_site_id: int | None
+
     class Config:
         from_attributes = True
 
@@ -63,5 +68,11 @@ class AssignmentOut(BaseModel):
     end_date: date | None
     position_title: str
     created_at: datetime
+
     class Config:
         from_attributes = True
+
+
+class TerminatePersonnelRequest(BaseModel):
+    termination_date: date
+    reason: str

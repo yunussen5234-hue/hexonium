@@ -2,7 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 
 from sqlalchemy import Boolean, Date, DateTime, Enum as SqlEnum, ForeignKey, Integer, Numeric, String, Text
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -43,6 +43,24 @@ class CurrencyType(str, Enum):
 class RecordStatus(str, Enum):
     ACTIVE = "Aktif"
     PASSIVE = "Pasif"
+    DELETED = "Silindi"
+
+
+class DocumentType(str, Enum):
+    ISE_GIRIS = "ise_giris"
+    SOZLESME = "sozlesme"
+    IBRANAME = "ibraname"
+    ISG = "isg"
+    KKD = "kkd"
+    ISTIFA = "istifa"
+    CIKIS_BILDIRGESI = "cikis_bildirgesi"
+
+
+class DocumentReviewStatus(str, Enum):
+    UPLOADED = "Yuklu"
+    MISSING = "Eksik"
+    APPROVED = "Onayli"
+    REJECTED = "Reddedildi"
 
 
 class User(Base):
@@ -82,16 +100,22 @@ class Personnel(Base):
     first_name: Mapped[str] = mapped_column(String(120))
     last_name: Mapped[str] = mapped_column(String(120))
     phone: Mapped[str] = mapped_column(String(30))
-    email: Mapped[str] = mapped_column(String(255), unique=True)
+    email: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     birth_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     hire_date: Mapped[date] = mapped_column(Date)
     termination_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    termination_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    exit_process_status: Mapped[str | None] = mapped_column(String(30), nullable=True)
     role_type: Mapped[str] = mapped_column(String(80))
     employment_type: Mapped[EmploymentType] = mapped_column(SqlEnum(EmploymentType))
     daily_wage: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
     salary: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
+    payment_type: Mapped[str | None] = mapped_column(String(40), nullable=True)
     status: Mapped[PersonnelStatus] = mapped_column(SqlEnum(PersonnelStatus), default=PersonnelStatus.ACTIVE)
     current_site_id: Mapped[int | None] = mapped_column(ForeignKey("sites.id"), nullable=True)
+    address: Mapped[str | None] = mapped_column(Text, nullable=True)
+    city: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    district: Mapped[str | None] = mapped_column(String(100), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -127,6 +151,27 @@ class BankAccount(Base):
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class Document(Base):
+    __tablename__ = "documents"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    personnel_id: Mapped[int | None] = mapped_column(ForeignKey("personnel.id"), nullable=True)
+    site_id: Mapped[int | None] = mapped_column(ForeignKey("sites.id"), nullable=True)
+    document_type: Mapped[DocumentType] = mapped_column(SqlEnum(DocumentType), nullable=False)
+    file_name_original: Mapped[str] = mapped_column(String(255))
+    file_storage_key: Mapped[str] = mapped_column(String(255), unique=True)
+    mime_type: Mapped[str] = mapped_column(String(120))
+    file_size: Mapped[int] = mapped_column(Integer)
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    status: Mapped[RecordStatus] = mapped_column(SqlEnum(RecordStatus), default=RecordStatus.ACTIVE)
+    review_status: Mapped[DocumentReviewStatus] = mapped_column(SqlEnum(DocumentReviewStatus), default=DocumentReviewStatus.UPLOADED)
+    uploaded_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    uploaded_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    effective_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
 
 class AuditLog(Base):

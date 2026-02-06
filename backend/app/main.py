@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import audit, auth, bank_accounts, personnel, reports, sites
+from app.api import audit, auth, bank_accounts, documents, personnel, reports, sites
 
 app = FastAPI(title="Hexonium API", version="1.0.0")
 
@@ -26,6 +26,7 @@ app.include_router(auth.router)
 app.include_router(sites.router)
 app.include_router(personnel.router)
 app.include_router(bank_accounts.router)
+app.include_router(documents.router)
 app.include_router(reports.router)
 app.include_router(audit.router)
 
