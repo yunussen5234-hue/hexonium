@@ -89,6 +89,32 @@ Sebep: WSL/Git Bash ortamı yok.
 Sebep: `cp` Linux komutu.
 Çözüm: CMD'de `copy`, PowerShell'de `Copy-Item` kullanın.
 
+
+### Hata: `docker compose up --build` sırasında `frontend -> RUN npm install` uzun süre takılıyor
+Sebep: Ağ/proxy/DNS nedeniyle npm registry'e erişim yavaş veya bloklu olabilir.
+
+Çözüm adımları (CMD):
+
+```cmd
+docker compose down
+set NPM_REGISTRY=https://registry.npmjs.org/
+docker compose build --no-cache frontend
+docker compose up
+```
+
+Kurumsal ağ/proxy varsa (PowerShell örneği):
+
+```powershell
+$env:NPM_REGISTRY = "https://registry.npmjs.org/"
+docker compose build --no-cache frontend
+```
+
+Log'u daha detaylı görmek için:
+
+```cmd
+docker compose build --no-cache --progress=plain frontend
+```
+
 ### Hata: `docker compose` komutu yok
 Çözüm:
 1. Docker Desktop kurulu mu kontrol edin.
